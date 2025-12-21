@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  python-nlp-backend:
+    build: ./backend/python_nlp
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./src/kb:/workspace/src/kb
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.nextjs
+    ports:
+      - "9002:9002"
+    depends_on:
+      - python-nlp-backend
+    environment:
+      - PYTHON_NLP_URL=http://python-nlp-backend:5000
+    restart: unless-stopped

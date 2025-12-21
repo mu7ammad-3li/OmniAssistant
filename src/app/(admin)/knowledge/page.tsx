@@ -1,19 +1,22 @@
 'use client';
 
+import { useCallback } from 'react';
 import { ChatInterface } from '@/components/chat-interface';
 import { pestKnowledgeRetrieval } from '@/ai/flows/pest-knowledge-retrieval';
 
 export default function KnowledgePage() {
 
-  const transformInput = (message: string) => {
+  // Memoize the callback functions to prevent unnecessary re-renders of the ChatInterface component.
+  // This is a performance optimization that ensures the functions are not recreated on every render.
+  const transformInput = useCallback((message: string) => {
     return {
       query: message,
     };
-  };
+  }, []);
 
-  const extractResponse = (result: any) => {
+  const extractResponse = useCallback((result: any) => {
     return result.response;
-  };
+  }, []);
 
   return (
     <div className="flex flex-col gap-8">
